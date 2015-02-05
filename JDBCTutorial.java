@@ -1,0 +1,76 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+// package jdbctutorial;
+
+import java.sql.*;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger; 
+
+/**
+ *
+ * @author scott
+ */
+public class JDBCTutorial {
+    
+    public static void simpleQuery(Connection conn) throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select id_prac, RPAD(nazwisko, 15) as nazwisko, placa_pod from pracownicy");
+        rs.afterLast();
+        while (rs.previous())
+        {
+            System.out.printf("%d %s %d\n", rs.getInt("id_prac"),
+                                            rs.getString("nazwisko"),
+                                            rs.getInt("placa_pod"));
+        }
+        rs.close();
+        stmt.close();
+    }
+    
+    public static void countObjects(Connection conn) throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select count(*) from pracownicy");
+        if (rs.next())
+            System.out.printf("Zatrudniono %d pracowników, w tym:\n", rs.getInt(1));
+        rs.close();
+        rs = stmt.executeQuery("select id_zesp, count(*) as cnt from pracownicy group by id_zesp");
+        while (rs.next())
+        {
+            System.out.printf("%d w zespole %d\n", rs.getInt("cnt"), rs.getInt("id_zesp"));
+        }
+        rs.close();
+        stmt.close();
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        Connection conn = null;
+        Properties connectionProps = new Properties();
+        connectionProps.put("user", "inf114816");
+        connectionProps.put("password", "inf114816");
+        System.out.println("lepecbeke");
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@//admlab2-main.cs.put.poznan.pl:1521/dblab01.cs.put.poznan.pl",
+                    connectionProps);
+            System.out.println("Połączono z bazą danych");
+            simpleQuery(conn);
+//            countObjects(conn);
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCTutorial.class.getName()).log(Level.SEVERE,
+                "Wystąpił błąd", ex);
+                System.exit(-1);
+        }
+    }
+    
+}
