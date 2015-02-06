@@ -43,9 +43,9 @@ public class JDBCTutorial {
         rs.afterLast();
         if (rs.previous())
             System.out.printf("najmniej zarabia asystent %s\n", rs.getString("nazwisko"));
-        if (rs.relative(-3))
+        if (rs.absolute(-3))
             System.out.printf("trzeci najmniej zarabiający asystent to %s\n", rs.getString("nazwisko"));
-        if (rs.relative(2))
+        if (rs.absolute(2))
             System.out.printf("przedostatni w rankingu najmniej zarabiających asystentów to %s\n", rs.getString("nazwisko"));
         rs.close();
         stmt.close();
